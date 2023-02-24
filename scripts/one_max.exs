@@ -22,6 +22,17 @@ crossover = fn population ->
   )
 end
 
+mutation = fn population ->
+  population
+  |> Enum.map(fn chromosome ->
+    if :rand.uniform() < 0.05 do
+      Enum.shuffle(chromosome)
+    else
+      chromosome
+    end
+  end)
+end
+
 algorithm = fn population, algorithm ->
   best = Enum.max_by(population, &Enum.sum/1)
   IO.write("\rCurrent Best: " <> Integer.to_string(Enum.sum(best)))
@@ -37,6 +48,9 @@ algorithm = fn population, algorithm ->
     |> selection.()
     # Create children
     |> crossover.()
+    # Mutate children
+    |> mutation.()
+    # Recurse
     |> algorithm.(algorithm)
   end
 end
